@@ -8,10 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Сущность мест в городе.
  *
  * @ORM\Entity(repositoryClass="App\Repository\PlaceRepository")
- * @ORM\Table(name="place", uniqueConstraints={
- *     @ORM\UniqueConstraint(name="place_city_id_name_idx", columns={"city_id", "name"}),
- *     @ORM\UniqueConstraint(name="place_city_id_slug_idx", columns={"city_id", "slug"})
- * })
+ * @ORM\Table(name="place")
  */
 class Place
 {
@@ -38,7 +35,7 @@ class Place
     private $closed;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", unique=true, length=255)
      */
     private $slug;
 
