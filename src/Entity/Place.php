@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Сущность мест в городе.
+ * Сущность заведения в городе.
  *
  * @ORM\Entity(repositoryClass="App\Repository\PlaceRepository")
  * @ORM\Table(name="place")
@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Place
 {
     /**
+     * id заведения
+     *
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -20,32 +22,44 @@ class Place
     private $id;
 
     /**
+     * Название заведения
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
+     * Активно ли заведение
+     *
      * @ORM\Column(type="boolean", options={"default": true})
      */
     private $active;
 
     /**
+     * Закрыто ли заведение
+     *
      * @ORM\Column(type="boolean", options={"default": false})
      */
     private $closed;
 
     /**
+     * slug
+     *
      * @ORM\Column(type="string", unique=true, length=255)
      */
     private $slug;
 
     /**
+     * Город, в котором находится заведение
+     *
      * @ORM\ManyToOne(targetEntity="App\Entity\City", inversedBy="places")
      * @ORM\JoinColumn(nullable=false)
      */
     private $city;
 
     /**
+     * Время создания
+     *
      * @ORM\Column(type="datetime_immutable")
      */
     private $createdAt;

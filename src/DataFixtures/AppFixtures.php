@@ -7,8 +7,18 @@ use App\Entity\Place;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
+/**
+ * Класс фикстур для приложения.
+ *
+ * @package App\DataFixtures
+ */
 class AppFixtures extends Fixture
 {
+    /**
+     * Загрузка фикстур.
+     *
+     * @param ObjectManager $manager
+     */
     public function load(ObjectManager $manager)
     {
         $manager->getConnection()->getConfiguration()->setSQLLogger(null);
@@ -68,6 +78,13 @@ class AppFixtures extends Fixture
         }
     }
 
+    /**
+     * Возвращает строку из случайного набора частей имени.
+     *
+     * @param array $nameParts список списков частей имени, например: [['первый', 'второй'], ['дом', 'подъезд']]
+     *
+     * @return string
+     */
     private function joinRandomParts(array $nameParts): string
     {
         return implode(

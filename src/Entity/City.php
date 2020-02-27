@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Сущность городов.
+ * Сущность города.
  *
  * @ORM\Entity(repositoryClass="App\Repository\CityRepository")
  * @ORM\Table(name="city")
@@ -15,6 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
 class City
 {
     /**
+     * id города
+     *
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -22,16 +24,22 @@ class City
     private $id;
 
     /**
+     * Название
+     *
      * @ORM\Column(type="string", unique=true, length=255)
      */
     private $name;
 
     /**
+     * slug
+     *
      * @ORM\Column(type="string", unique=true, length=255)
      */
     private $slug;
 
     /**
+     * Заведения в городе
+     *
      * @ORM\OneToMany(targetEntity="App\Entity\Place", mappedBy="city")
      */
     private $places;
