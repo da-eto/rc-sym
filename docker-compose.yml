@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+    php:
+        image: chialab/php-dev:7.1-fpm
+        container_name: rc_sym_php
+        volumes:
+            - .:/app
+        networks:
+            - rc_sym_net
+    db:
+        image: postgres:12
+        container_name: rc_sym_db
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: "${DB_PASSWORD}"
+        ports:
+            - 5432:5432
+        volumes:
+            - ./data/db:/var/lib/postgresql/data
+        networks:
+            - rc_sym_net
+networks:
+    rc_sym_net:
+        driver: bridge
