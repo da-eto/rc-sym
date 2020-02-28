@@ -16,27 +16,49 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  */
 class PlaceRepository extends ServiceEntityRepository
 {
+    private const ITERATE_BATCH_SIZE = 1000;
+
+    /**
+     * Конструктор PlaceRepository.
+     *
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Place::class);
     }
 
     /**
-     * Возвращает заведения с id больше заданного в порядке возрастания id.
+     * Итерирует по всем заведениям.
      *
-     * @param int $previousId id заведения, после которого искать
-     * @param int $limit максимальное количество заведений в результате
+     * После получения очередного результате предыдущие могут быть исключены из ObjectManager.
      *
-     * @return Place[] найденные заведения
+     * @return iterable|Place[] заведения
      */
-    public function findWithGreaterIdOrderedById(int $previousId, int $limit)
+    public function iterateAll(): iterable
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.id > :id')
-            ->setParameter('id', $previousId)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+        $latestId = 0;
+        $placesLeft = true;
+
+        while ($placesLeft) {
+            $placesLeft = false;
+            $query = $this->createQueryBuilder('p')
+                ->where('p.id > :id')
+                ->setParameter('id', $latestId)
+                ->orderBy('p.id', 'ASC')
+                ->setMaxResults(self::ITERATE_BATCH_SIZE)
+                ->getQuery();
+
+            foreach ($query->iterate() as $placeInfo) {
+                /** @var Place $place */
+                $place = $placeInfo[0];
+                $latestId = $place->getId();
+                $placesLeft = true;
+
+                yield $place;
+            }
+
+            $this->clear();
+        }
     }
 }

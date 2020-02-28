@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
  *
  * @package App\Exporter\Places
  */
-class PlacesExporter implements PlacesExporterInterface, ServiceSubscriberInterface
+class AllPlacesExporter implements PlacesExporterInterface, ServiceSubscriberInterface
 {
     /**
      * Фабрики экспорта в формате ['тип' => 'имя класса']
@@ -25,10 +25,6 @@ class PlacesExporter implements PlacesExporterInterface, ServiceSubscriberInterf
         'xml' => XmlExporterFactory::class,
         'html' => HtmlExporterFactory::class,
     ];
-    /**
-     * Размер выборки для пакетной загрузки заведений.
-     */
-    private const BATCH_SIZE = 1000;
 
     /**
      * @var ContainerInterface
@@ -51,11 +47,17 @@ class PlacesExporter implements PlacesExporterInterface, ServiceSubscriberInterf
         $this->placeRepository = $placeRepository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public static function getSubscribedServices()
     {
         return self::EXPORTER_FACTORIES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function supports(string $type): bool
     {
         return array_key_exists($type, self::EXPORTER_FACTORIES);
@@ -90,17 +92,9 @@ class PlacesExporter implements PlacesExporterInterface, ServiceSubscriberInterf
 
         $writer = $factory->createWriter($filename);
         $writer->startWrite();
-        $latestId = 0;
-        $places = $this->placeRepository->findWithGreaterIdOrderedById($latestId, self::BATCH_SIZE);
 
-        while (count($places) > 0) {
-            foreach ($places as $place) {
-                $writer->appendPlace($place);
-                $latestId = $place->getId();
-            }
-
-            $this->placeRepository->clear();
-            $places = $this->placeRepository->findWithGreaterIdOrderedById($latestId, self::BATCH_SIZE);
+        foreach ($this->placeRepository->iterateAll() as $place) {
+            $writer->appendPlace($place);
         }
 
         $writer->endWrite();
