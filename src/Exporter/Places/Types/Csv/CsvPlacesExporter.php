@@ -3,17 +3,21 @@
 namespace App\Exporter\Places\Types\Csv;
 
 use App\Exporter\Places\ConcretePlacesExporterInterface;
-use App\Exporter\Places\PlacesExporterWriterInterface;
-use App\Exporter\Places\Writer\TextFileWriter;
+use App\Exporter\Places\Stream\TextFileStream;
 
 /**
- * Сервис создания экспорта в CSV
+ * Экспорт в CSV
  *
  * @package App\Exporter\Places\Types\Csv
  */
 class CsvPlacesExporter implements ConcretePlacesExporterInterface
 {
     private const TYPE = 'csv';
+
+    /**
+     * @var CsvPlacesWriter
+     */
+    private $writer;
 
     /**
      * {@inheritDoc}
@@ -23,17 +27,19 @@ class CsvPlacesExporter implements ConcretePlacesExporterInterface
         return $type === self::TYPE;
     }
 
+    public function __construct(CsvPlacesWriter $writer)
+    {
+        $this->writer = $writer;
+    }
+
     /**
      * {@inheritDoc}
      */
     public function export(iterable $places, string $type, string $filename): void
     {
-        $writer = new TextFileWriter($filename, new CsvExporterFormatter());
-        $writer->startWrite();
-
-        foreach ($places as $place) {
-            $writer->appendPlace($place);
-        }
-
-        $writer->endWrite();
-    }}
+        $stream = new TextFileStream($filename);
+        $stream->open();
+        $this->writer->writePlaces($places, $stream);
+        $stream->close();
+    }
+}

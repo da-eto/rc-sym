@@ -3,12 +3,10 @@
 namespace App\Exporter\Places\Types\Html;
 
 use App\Exporter\Places\ConcretePlacesExporterInterface;
-use App\Exporter\Places\PlacesExporterWriterInterface;
-use App\Exporter\Places\Writer\TextFileWriter;
-use Twig\Environment;
+use App\Exporter\Places\Stream\TextFileStream;
 
 /**
- * Сервис создания экспорта в HTML
+ * Экспорт в HTML
  *
  * @package App\Exporter\Places\Types\Html
  */
@@ -17,13 +15,13 @@ class HtmlPlacesExporter implements ConcretePlacesExporterInterface
     private const TYPE = 'html';
 
     /**
-     * @var Environment
+     * @var HtmlPlacesFormatter
      */
-    private $twig;
+    private $formatter;
 
-    public function __construct(Environment $twig)
+    public function __construct(HtmlPlacesFormatter $formatter)
     {
-        $this->twig = $twig;
+        $this->formatter = $formatter;
     }
 
     /**
@@ -39,13 +37,9 @@ class HtmlPlacesExporter implements ConcretePlacesExporterInterface
      */
     public function export(iterable $places, string $type, string $filename): void
     {
-        $writer = new TextFileWriter($filename, new HtmlExporterFormatter($this->twig));
-        $writer->startWrite();
-
-        foreach ($places as $place) {
-            $writer->appendPlace($place);
-        }
-
-        $writer->endWrite();
+        $stream = new TextFileStream($filename);
+        $stream->open();
+        $stream->append($this->formatter->format($places));
+        $stream->close();
     }
 }

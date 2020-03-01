@@ -1,0 +1,29 @@
+{# places \App\Entity\Place[]|iterable #}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<ul>
+
+    {% for place in places %}
+        <li>
+            {{ place.name }}
+            <ul>
+                <li>created: {{ place.createdAt|date("d.m.Y H:m") }}</li>
+                <li>slug: {{ place.slug }}</li>
+                <li>city: {{ place.city.name }}</li>
+                <li>active: {% if place.active %}yes{% else %}no{% endif %}</li>
+                <li>closed: {% if place.closed %}yes{% else %}no{% endif %}</li>
+            </ul>
+        </li>
+    {% endfor %}
+
+</ul>
+</body>
+</html>

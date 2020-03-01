@@ -3,15 +3,14 @@
 namespace App\Exporter\Places\Types\Xml;
 
 use App\Entity\Place;
-use App\Exporter\Places\Exception\PlacesExporterWriterException;
-use App\Exporter\Places\PlacesExporterWriterInterface;
+use App\Exporter\Places\Exception\PlacesExporterStreamException;
 
 /**
  * Класс записи экспорта в XML
  *
  * @package App\Exporter\Places\Types\Xml
  */
-class XmlExporterWriter implements PlacesExporterWriterInterface
+class XmlPlacesWriter
 {
     /**
      * @var string
@@ -74,7 +73,7 @@ class XmlExporterWriter implements PlacesExporterWriterInterface
         $success = file_put_contents($this->filename, $this->xmlWriter->outputMemory());
 
         if ($success === false) {
-            throw new PlacesExporterWriterException(
+            throw new PlacesExporterStreamException(
                 "Can't write to '{$this->filename}'"
             );
         }
