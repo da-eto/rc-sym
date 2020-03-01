@@ -30,7 +30,7 @@ services:
     # please note that last definitions always *replace* previous ones
 
     _instanceof:
-        App\Exporter\Places\PlacesExporterFactoryInterface:
+        App\Exporter\Places\ConcretePlacesExporterInterface:
             tags: ['app.exporter.all_places_concrete_exporter']
 
     App\Exporter\Places\AllPlacesExporter:
