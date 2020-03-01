@@ -3,33 +3,19 @@
 namespace App\Exporter\Places;
 
 use App\Exporter\Places\Exception\PlacesExporterException;
-use App\Exporter\Places\Types\Csv\CsvExporterFactory;
-use App\Exporter\Places\Types\Html\HtmlExporterFactory;
-use App\Exporter\Places\Types\Xml\XmlExporterFactory;
 use App\Repository\PlaceRepository;
-use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 
 /**
  * Сервис экспорта заведений в файлы различных форматов
  *
  * @package App\Exporter\Places
  */
-class AllPlacesExporter implements PlacesExporterInterface, ServiceSubscriberInterface
+class AllPlacesExporter implements PlacesExporterInterface
 {
     /**
-     * Фабрики экспорта в формате ['тип' => 'имя класса']
+     * @var PlacesExporterFactoryInterface[]|iterable
      */
-    private const EXPORTER_FACTORIES = [
-        'csv' => CsvExporterFactory::class,
-        'xml' => XmlExporterFactory::class,
-        'html' => HtmlExporterFactory::class,
-    ];
-
-    /**
-     * @var ContainerInterface
-     */
-    private $factoriesLocator;
+    private $exporters;
     /**
      * @var PlaceRepository
      */
@@ -38,21 +24,13 @@ class AllPlacesExporter implements PlacesExporterInterface, ServiceSubscriberInt
     /**
      * Конструктор PlacesExporter.
      *
-     * @param ContainerInterface $factoriesLocator контейнер внутреннего сервис-локатора
+     * @param iterable|PlacesExporterFactoryInterface[] $exporters
      * @param PlaceRepository $placeRepository
      */
-    public function __construct(ContainerInterface $factoriesLocator, PlaceRepository $placeRepository)
+    public function __construct(iterable $exporters, PlaceRepository $placeRepository)
     {
-        $this->factoriesLocator = $factoriesLocator;
+        $this->exporters = $exporters;
         $this->placeRepository = $placeRepository;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function getSubscribedServices()
-    {
-        return self::EXPORTER_FACTORIES;
     }
 
     /**
@@ -60,7 +38,7 @@ class AllPlacesExporter implements PlacesExporterInterface, ServiceSubscriberInt
      */
     public function supports(string $type): bool
     {
-        return array_key_exists($type, self::EXPORTER_FACTORIES);
+        return null !== $this->getExporterForType($type);
     }
 
     /**
@@ -73,16 +51,16 @@ class AllPlacesExporter implements PlacesExporterInterface, ServiceSubscriberInt
      */
     public function export(string $type, string $filename): void
     {
-        if (!$this->factoriesLocator->has($type)) {
+        if (!$this->supports($type)) {
             throw new PlacesExporterException(
                 "Can't export with unsupported type '{$type}'"
             );
         }
 
-        $factory = $this->factoriesLocator->get($type);
+        $exporter = $this->getExporterForType($type);
 
-        if (!$factory instanceof PlacesExporterFactoryInterface) {
-            $className = get_class();
+        if (!$exporter instanceof PlacesExporterFactoryInterface) {
+            $className = get_class($exporter);
             $interfaceName = PlacesExporterFactoryInterface::class;
 
             throw new PlacesExporterException(
@@ -90,7 +68,7 @@ class AllPlacesExporter implements PlacesExporterInterface, ServiceSubscriberInt
             );
         }
 
-        $writer = $factory->createWriter($filename);
+        $writer = $exporter->createWriter($filename);
         $writer->startWrite();
 
         foreach ($this->placeRepository->iterateAll() as $place) {
@@ -98,5 +76,23 @@ class AllPlacesExporter implements PlacesExporterInterface, ServiceSubscriberInt
         }
 
         $writer->endWrite();
+    }
+
+    /**
+     * Получить конкретный экспортер для типа.
+     *
+     * @param string $type
+     *
+     * @return PlacesExporterFactoryInterface|null
+     */
+    private function getExporterForType(string $type): ?PlacesExporterFactoryInterface
+    {
+        foreach ($this->exporters as $exporter) {
+            if ($exporter->supports($type)) {
+                return $exporter;
+            }
+        }
+
+        return null;
     }
 }

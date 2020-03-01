@@ -12,8 +12,18 @@ use App\Exporter\Places\PlacesExporterWriterInterface;
  */
 class XmlExporterFactory implements PlacesExporterFactoryInterface
 {
+    private const TYPE = 'xml';
+
     public function createWriter(string $filename): PlacesExporterWriterInterface
     {
         return new XmlExporterWriter($filename);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supports(string $type): bool
+    {
+        return $type === self::TYPE;
     }
 }

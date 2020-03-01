@@ -13,8 +13,21 @@ use App\Exporter\Places\Writer\TextFileWriter;
  */
 class CsvExporterFactory implements PlacesExporterFactoryInterface
 {
+    private const TYPE = 'csv';
+
+    /**
+     * {@inheritDoc}
+     */
     public function createWriter(string $filename): PlacesExporterWriterInterface
     {
         return new TextFileWriter($filename, new CsvExporterFormatter());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supports(string $type): bool
+    {
+        return $type === self::TYPE;
     }
 }

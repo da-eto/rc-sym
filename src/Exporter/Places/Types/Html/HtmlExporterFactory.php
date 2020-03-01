@@ -14,6 +14,8 @@ use Twig\Environment;
  */
 class HtmlExporterFactory implements PlacesExporterFactoryInterface
 {
+    private const TYPE = 'html';
+
     /**
      * @var Environment
      */
@@ -27,5 +29,13 @@ class HtmlExporterFactory implements PlacesExporterFactoryInterface
     public function createWriter(string $filename): PlacesExporterWriterInterface
     {
         return new TextFileWriter($filename, new HtmlExporterFormatter($this->twig));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supports(string $type): bool
+    {
+        return $type === self::TYPE;
     }
 }
