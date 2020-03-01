@@ -31,8 +31,8 @@ services:
 
     _instanceof:
         App\Exporter\Places\PlacesExporterFactoryInterface:
-            tags: ['app.exporter.all_places_export']
+            tags: ['app.exporter.all_places_concrete_exporter']
 
     App\Exporter\Places\AllPlacesExporter:
         arguments:
-            - !tagged app.exporter.all_places_export
+            - !tagged app.exporter.all_places_concrete_exporter

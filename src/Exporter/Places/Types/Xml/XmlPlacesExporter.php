@@ -2,7 +2,7 @@
 
 namespace App\Exporter\Places\Types\Xml;
 
-use App\Exporter\Places\PlacesExporterFactoryInterface;
+use App\Exporter\Places\ConcretePlacesExporterInterface;
 use App\Exporter\Places\PlacesExporterWriterInterface;
 
 /**
@@ -10,7 +10,7 @@ use App\Exporter\Places\PlacesExporterWriterInterface;
  *
  * @package App\Exporter\Places\Types\Xml
  */
-class XmlExporterFactory implements PlacesExporterFactoryInterface
+class XmlPlacesExporter implements ConcretePlacesExporterInterface
 {
     private const TYPE = 'xml';
 

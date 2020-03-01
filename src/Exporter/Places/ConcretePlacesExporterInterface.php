@@ -9,7 +9,7 @@ use App\Entity\Place;
  *
  * @package App\Exporter\Places
  */
-interface PlacesExporterFactoryInterface
+interface ConcretePlacesExporterInterface
 {
     /**
      * Поддерживает ли экспортер переданный тип?

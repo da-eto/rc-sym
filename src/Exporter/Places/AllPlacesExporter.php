@@ -13,7 +13,7 @@ use App\Repository\PlaceRepository;
 class AllPlacesExporter implements PlacesExporterInterface
 {
     /**
-     * @var PlacesExporterFactoryInterface[]|iterable
+     * @var ConcretePlacesExporterInterface[]|iterable
      */
     private $exporters;
     /**
@@ -24,7 +24,7 @@ class AllPlacesExporter implements PlacesExporterInterface
     /**
      * Конструктор PlacesExporter.
      *
-     * @param iterable|PlacesExporterFactoryInterface[] $exporters
+     * @param iterable|ConcretePlacesExporterInterface[] $exporters
      * @param PlaceRepository $placeRepository
      */
     public function __construct(iterable $exporters, PlaceRepository $placeRepository)
@@ -59,9 +59,9 @@ class AllPlacesExporter implements PlacesExporterInterface
 
         $exporter = $this->getExporterForType($type);
 
-        if (!$exporter instanceof PlacesExporterFactoryInterface) {
+        if (!$exporter instanceof ConcretePlacesExporterInterface) {
             $className = get_class($exporter);
-            $interfaceName = PlacesExporterFactoryInterface::class;
+            $interfaceName = ConcretePlacesExporterInterface::class;
 
             throw new PlacesExporterException(
                 "Exporter class {$className} for type '{$type}' must implement {$interfaceName}"
@@ -76,9 +76,9 @@ class AllPlacesExporter implements PlacesExporterInterface
      *
      * @param string $type
      *
-     * @return PlacesExporterFactoryInterface|null
+     * @return ConcretePlacesExporterInterface|null
      */
-    private function getExporterForType(string $type): ?PlacesExporterFactoryInterface
+    private function getExporterForType(string $type): ?ConcretePlacesExporterInterface
     {
         foreach ($this->exporters as $exporter) {
             if ($exporter->supports($type)) {

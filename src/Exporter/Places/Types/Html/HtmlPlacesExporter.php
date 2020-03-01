@@ -2,7 +2,7 @@
 
 namespace App\Exporter\Places\Types\Html;
 
-use App\Exporter\Places\PlacesExporterFactoryInterface;
+use App\Exporter\Places\ConcretePlacesExporterInterface;
 use App\Exporter\Places\PlacesExporterWriterInterface;
 use App\Exporter\Places\Writer\TextFileWriter;
 use Twig\Environment;
@@ -12,7 +12,7 @@ use Twig\Environment;
  *
  * @package App\Exporter\Places\Types\Html
  */
-class HtmlExporterFactory implements PlacesExporterFactoryInterface
+class HtmlPlacesExporter implements ConcretePlacesExporterInterface
 {
     private const TYPE = 'html';
 

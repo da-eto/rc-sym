@@ -2,7 +2,7 @@
 
 namespace App\Exporter\Places\Types\Csv;
 
-use App\Exporter\Places\PlacesExporterFactoryInterface;
+use App\Exporter\Places\ConcretePlacesExporterInterface;
 use App\Exporter\Places\PlacesExporterWriterInterface;
 use App\Exporter\Places\Writer\TextFileWriter;
 
@@ -11,7 +11,7 @@ use App\Exporter\Places\Writer\TextFileWriter;
  *
  * @package App\Exporter\Places\Types\Csv
  */
-class CsvExporterFactory implements PlacesExporterFactoryInterface
+class CsvPlacesExporter implements ConcretePlacesExporterInterface
 {
     private const TYPE = 'csv';
 
