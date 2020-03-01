@@ -3,6 +3,7 @@
 namespace App\Exporter\Places\Types\Xml;
 
 use App\Exporter\Places\ConcretePlacesExporterInterface;
+use App\Exporter\Places\Exception\PlacesExporterException;
 
 /**
  * Эспорт в XML
@@ -26,6 +27,12 @@ class XmlPlacesExporter implements ConcretePlacesExporterInterface
      */
     public function export(iterable $places, string $type, string $filename): void
     {
+        if (!$this->supports($type)) {
+            throw new PlacesExporterException(
+                "Can't export with unsupported type '{$type}'"
+            );
+        }
+
         $writer = new XmlPlacesWriter($filename);
         $writer->startWrite();
 
