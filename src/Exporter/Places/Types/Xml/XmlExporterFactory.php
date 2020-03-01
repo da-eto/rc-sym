@@ -14,16 +14,26 @@ class XmlExporterFactory implements PlacesExporterFactoryInterface
 {
     private const TYPE = 'xml';
 
-    public function createWriter(string $filename): PlacesExporterWriterInterface
-    {
-        return new XmlExporterWriter($filename);
-    }
-
     /**
      * {@inheritDoc}
      */
     public function supports(string $type): bool
     {
         return $type === self::TYPE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function export(iterable $places, string $type, string $filename): void
+    {
+        $writer = new XmlExporterWriter($filename);
+        $writer->startWrite();
+
+        foreach ($places as $place) {
+            $writer->appendPlace($place);
+        }
+
+        $writer->endWrite();
     }
 }

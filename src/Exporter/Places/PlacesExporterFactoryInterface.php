@@ -2,8 +2,10 @@
 
 namespace App\Exporter\Places;
 
+use App\Entity\Place;
+
 /**
- * Интерфейс для создания писателя экспорта.
+ * Интерфейс конкретной реализации экспорта.
  *
  * @package App\Exporter\Places
  */
@@ -19,11 +21,11 @@ interface PlacesExporterFactoryInterface
     public function supports(string $type): bool;
 
     /**
-     * Создаёт объект для записи экспорта в файл.
+     * Экспорт заведений в файл.
      *
-     * @param string $filename
-     *
-     * @return PlacesExporterWriterInterface
+     * @param iterable|Place[] $places заведения
+     * @param string $type тип экспорта
+     * @param string $filename имя файла
      */
-    public function createWriter(string $filename): PlacesExporterWriterInterface;
+    public function export(iterable $places, string $type, string $filename): void;
 }

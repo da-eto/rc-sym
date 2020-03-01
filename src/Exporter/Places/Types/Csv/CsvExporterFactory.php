@@ -18,16 +18,22 @@ class CsvExporterFactory implements PlacesExporterFactoryInterface
     /**
      * {@inheritDoc}
      */
-    public function createWriter(string $filename): PlacesExporterWriterInterface
+    public function supports(string $type): bool
     {
-        return new TextFileWriter($filename, new CsvExporterFormatter());
+        return $type === self::TYPE;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function supports(string $type): bool
+    public function export(iterable $places, string $type, string $filename): void
     {
-        return $type === self::TYPE;
-    }
-}
+        $writer = new TextFileWriter($filename, new CsvExporterFormatter());
+        $writer->startWrite();
+
+        foreach ($places as $place) {
+            $writer->appendPlace($place);
+        }
+
+        $writer->endWrite();
+    }}

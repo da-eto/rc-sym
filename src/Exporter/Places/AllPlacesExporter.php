@@ -68,14 +68,7 @@ class AllPlacesExporter implements PlacesExporterInterface
             );
         }
 
-        $writer = $exporter->createWriter($filename);
-        $writer->startWrite();
-
-        foreach ($this->placeRepository->iterateAll() as $place) {
-            $writer->appendPlace($place);
-        }
-
-        $writer->endWrite();
+        $exporter->export($this->placeRepository->iterateAll(), $type, $filename);
     }
 
     /**

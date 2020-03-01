@@ -26,16 +26,26 @@ class HtmlExporterFactory implements PlacesExporterFactoryInterface
         $this->twig = $twig;
     }
 
-    public function createWriter(string $filename): PlacesExporterWriterInterface
-    {
-        return new TextFileWriter($filename, new HtmlExporterFormatter($this->twig));
-    }
-
     /**
      * {@inheritDoc}
      */
     public function supports(string $type): bool
     {
         return $type === self::TYPE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function export(iterable $places, string $type, string $filename): void
+    {
+        $writer = new TextFileWriter($filename, new HtmlExporterFormatter($this->twig));
+        $writer->startWrite();
+
+        foreach ($places as $place) {
+            $writer->appendPlace($place);
+        }
+
+        $writer->endWrite();
     }
 }
